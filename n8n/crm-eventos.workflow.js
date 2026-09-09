@@ -384,7 +384,7 @@ const correoAlCliente = node({
     onError: 'continueRegularOutput',
     parameters: {
       operation: 'send',
-      fromEmail: 'PON_AQUI_TU_REMITENTE@tu-dominio.com',
+      fromEmail: 'bienvenido@halonso.digital',
       toEmail: expr('{{ $json.paraCliente }}'),
       subject: expr('{{ $json.asuntoCliente }}'),
       emailFormat: 'text',
@@ -404,7 +404,7 @@ const correoAlDueno = node({
     onError: 'continueRegularOutput',
     parameters: {
       operation: 'send',
-      fromEmail: 'PON_AQUI_TU_REMITENTE@tu-dominio.com',
+      fromEmail: 'bienvenido@halonso.digital',
       toEmail: expr('{{ $json.paraDueno }}'),
       subject: expr('{{ $json.asuntoDueno }}'),
       emailFormat: 'text',
@@ -520,7 +520,7 @@ const correoDeAcceso = node({
     onError: 'continueRegularOutput',
     parameters: {
       operation: 'send',
-      fromEmail: 'PON_AQUI_TU_REMITENTE@tu-dominio.com',
+      fromEmail: 'bienvenido@halonso.digital',
       toEmail: expr('{{ $json.paraCliente }}'),
       subject: expr('{{ $json.asuntoCliente }}'),
       emailFormat: 'text',

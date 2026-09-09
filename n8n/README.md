@@ -35,8 +35,42 @@ en el entorno de la aplicación y en n8n; en el repositorio, nunca.
 
 ### 2. El remitente
 
-Los tres nodos de correo traen `PON_AQUI_TU_REMITENTE@tu-dominio.com`. Pon un
-buzón que exista en BillionMail.
+Los tres nodos de correo salen desde **`bienvenido@halonso.digital`**. El buzón
+tiene que existir en BillionMail.
+
+**No pongas una dirección de Gmail ni de ningún proveedor ajeno.** Es un callejón
+sin salida, no un descuido de configuración: para enviar *como* `@gmail.com`
+harías falta estar en el SPF de Google y tener su llave privada de DKIM.
+Gmail rechaza el correo antes de entregarlo:
+
+```
+550-5.7.26 Your email has been blocked because the sender is unauthenticated.
+SPF [gmail.com] with ip: [93.188.167.69] = did not pass
+```
+
+**Alineación, no solo autenticación.** `halonso.digital` tiene
+`DMARC p=quarantine`, así que no basta con que SPF pase: tiene que pasar
+*alineado*, es decir, sobre el mismo dominio que aparece en el `From:`. Si
+BillionMail envía con un `Return-Path` de otro dominio, SPF se valida contra
+ése, no cuadra con el `From:`, y el correo se va a spam aunque técnicamente
+haya autenticado.
+
+Estado del DNS de `halonso.digital` a septiembre de 2026:
+
+| | |
+|---|---|
+| SPF | ✅ `v=spf1 +a +mx +ip4:93.188.167.69 -all` — autoriza la IP de envío |
+| DMARC | ✅ `p=quarantine` |
+| PTR | ✅ la IP resuelve a `mail.diabolicalservices.tech` |
+| **DKIM** | ❌ **pendiente** — sin publicar en ningún selector |
+
+Con SPF alineado ya entrega, pero **falta activar DKIM** para ese dominio en
+BillionMail y publicar el TXT del selector. Mientras no esté, un solo cambio de
+IP tumba toda la entrega.
+
+Para comprobarlo: manda uno de prueba a una cuenta de Gmail, abre *Mostrar
+original* y busca `dmarc=pass` en la cabecera `Authentication-Results`. Con
+`spf=pass` pero `dmarc=fail`, el correo llega a spam.
 
 ### 3. Las URLs de los nodos
 
