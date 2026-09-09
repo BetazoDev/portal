@@ -1,0 +1,39 @@
+# Lo que no debe entrar al contexto de build.
+#
+# Además de hacer el build más rápido, esto es una defensa: si un .env.local
+# entrara al contexto, quedaría en una capa de la imagen aunque el Dockerfile
+# nunca lo copie explícitamente.
+
+node_modules
+.next
+.next-build
+out
+build
+coverage
+
+# Secretos. Nunca deben llegar al contexto de build.
+.env
+.env.*
+
+.git
+.gitignore
+.github
+
+# Documentación y herramientas que no participan en el build.
+docs
+n8n
+scripts
+supabase
+AGENTS.md
+README.md
+.claude
+.vscode
+.idea
+
+*.md
+
+Dockerfile
+.dockerignore
+npm-debug.log*
+*.tsbuildinfo
+.DS_Store
