@@ -1,26 +1,210 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================================
+   Sistema de diseño — docs/DESIGN_TOKENS.md
+
+   Blanco y negro estricto: todos los colores son escala de grises pura
+   (croma 0 en OKLCH). Lo que en otra interfaz resolvería el color, aquí lo
+   resuelven el peso, el relleno, el borde y el glifo.
+   ========================================================================= */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ---- Puente con los nombres que esperan los componentes de shadcn ---- */
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--ink);
+  --color-primary-foreground: var(--paper);
+  --color-secondary: var(--surface-sunken);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--surface-sunken);
+  --color-muted-foreground: var(--ink-soft);
+  --color-accent: var(--surface-hover);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: var(--ink);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--ink);
+
+  --color-sidebar: var(--surface-sunken);
+  --color-sidebar-foreground: var(--ink);
+  --color-sidebar-primary: var(--ink);
+  --color-sidebar-primary-foreground: var(--paper);
+  --color-sidebar-accent: var(--surface);
+  --color-sidebar-accent-foreground: var(--ink);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--ink);
+
+  /* ---- Tokens propios, nombrados por función ---- */
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-hover: var(--surface-hover);
+  --color-border-strong: var(--border-strong);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+
+  /* Rampa de gráficas: también monocroma, de más claro a más oscuro. */
+  --color-chart-1: var(--ink-faint);
+  --color-chart-2: var(--ink-soft);
+  --color-chart-3: oklch(0.44 0 0);
+  --color-chart-4: oklch(0.32 0 0);
+  --color-chart-5: var(--ink);
+
+  /* ---- Tipografía ---- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --text-title-page: 1.25rem;
+  --text-title-page--line-height: 1.75rem;
+  --text-title-page--font-weight: 600;
+  --text-title-page--letter-spacing: -0.01em;
+
+  --text-title-section: 1rem;
+  --text-title-section--line-height: 1.5rem;
+  --text-title-section--font-weight: 600;
+  --text-title-section--letter-spacing: -0.005em;
+
+  --text-title-card: 0.875rem;
+  --text-title-card--line-height: 1.25rem;
+  --text-title-card--font-weight: 600;
+
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.25rem;
+  --text-body--font-weight: 400;
+
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.125rem;
+  --text-meta--font-weight: 400;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1rem;
+  --text-label--font-weight: 500;
+  --text-label--letter-spacing: 0.01em;
+
+  --text-chip: 0.75rem;
+  --text-chip--line-height: 1rem;
+  --text-chip--font-weight: 500;
+
+  /* ---- Forma: un radio por tipo de elemento, no uno para todo ---- */
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 10px;
+  --radius-sheet: 12px;
+
+  --radius-sm: var(--radius-chip);
+  --radius-md: var(--radius-control);
+  --radius-lg: var(--radius-card);
+  --radius-xl: var(--radius-sheet);
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
+
+  /* ---- Sombra: solo para lo que de verdad flota ---- */
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: var(--sombra-flotante);
+  --shadow-lg: var(--sombra-flotante);
+  --shadow-flotante: var(--sombra-flotante);
+  --shadow-arrastre: var(--sombra-arrastre);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ---------------------------------------------------------------- modo claro */
+:root {
+  --paper: oklch(0.98 0 0);
+  --surface: oklch(1 0 0);
+  --surface-sunken: oklch(0.962 0 0);
+  --surface-hover: oklch(0.945 0 0);
+  --border: oklch(0.916 0 0);
+  --border-strong: oklch(0.85 0 0);
+  --ink: oklch(0.185 0 0);
+  --ink-soft: oklch(0.556 0 0);
+  --ink-faint: oklch(0.7 0 0);
+
+  --radius: 0.625rem;
+
+  --sombra-flotante: 0 8px 24px -8px oklch(0 0 0 / 0.18);
+  --sombra-arrastre: 0 12px 28px -10px oklch(0 0 0 / 0.28);
+
+  /* Movimiento: solo el que responde a una acción del usuario. */
+  --duracion-rapida: 120ms;
+  --duracion-media: 160ms;
+  --duracion-overlay: 200ms;
+  --curva: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* -------------------------------------------------------------- modo oscuro
+   El fondo no es negro puro: en negro absoluto el texto blanco produce halo. */
+.dark {
+  --paper: oklch(0.155 0 0);
+  --surface: oklch(0.195 0 0);
+  --surface-sunken: oklch(0.135 0 0);
+  --surface-hover: oklch(0.255 0 0);
+  --border: oklch(0.285 0 0);
+  --border-strong: oklch(0.38 0 0);
+  --ink: oklch(0.975 0 0);
+  --ink-soft: oklch(0.68 0 0);
+  --ink-faint: oklch(0.52 0 0);
+
+  --sombra-flotante: 0 8px 24px -8px oklch(0 0 0 / 0.55);
+  --sombra-arrastre: 0 12px 28px -10px oklch(0 0 0 / 0.65);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground text-body;
+  }
+
+  /* Cifras alineadas en columnas: contadores, fechas y tablas. */
+  table,
+  time,
+  [data-cifras] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Foco visible en lo que no trae anillo propio de shadcn. */
+  a:focus-visible,
+  [tabindex]:focus-visible,
+  [role="button"]:not(button):focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  ::placeholder {
+    color: var(--ink-faint);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duracion-rapida: 0ms;
+    --duracion-media: 0ms;
+    --duracion-overlay: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
