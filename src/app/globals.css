@@ -52,6 +52,30 @@
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
 
+  /* ---- Tonos semánticos ----------------------------------------------------
+     El color se suma al sistema, no lo sustituye: el glifo, el peso y el
+     relleno siguen distinguiendo estado y prioridad por sí solos. Así el
+     significado sobrevive al daltonismo, a una impresión en gris y a una
+     pantalla mal calibrada. El tono acelera el reconocimiento; no lo carga.
+
+     Cada uno tiene dos variantes: la de línea y texto, y una "suave" para
+     rellenos. "cancelado" y las prioridades bajas se quedan sin tono a
+     propósito: si todo tiene color, el color deja de significar. */
+  --color-tono-nuevo: var(--tono-nuevo);
+  --color-tono-nuevo-suave: var(--tono-nuevo-suave);
+  --color-tono-revision: var(--tono-revision);
+  --color-tono-revision-suave: var(--tono-revision-suave);
+  --color-tono-progreso: var(--tono-progreso);
+  --color-tono-progreso-suave: var(--tono-progreso-suave);
+  --color-tono-espera: var(--tono-espera);
+  --color-tono-espera-suave: var(--tono-espera-suave);
+  --color-tono-hecho: var(--tono-hecho);
+  --color-tono-hecho-suave: var(--tono-hecho-suave);
+  --color-tono-alta: var(--tono-alta);
+  --color-tono-alta-suave: var(--tono-alta-suave);
+  --color-tono-urgente: var(--tono-urgente);
+  --color-tono-urgente-suave: var(--tono-urgente-suave);
+
   /* Rampa de gráficas: también monocroma, de más claro a más oscuro. */
   --color-chart-1: var(--ink-faint);
   --color-chart-2: var(--ink-soft);
@@ -129,6 +153,25 @@
   --ink-soft: oklch(0.556 0 0);
   --ink-faint: oklch(0.7 0 0);
 
+  /* Tonos, modo claro. Croma bajo (0.10–0.13) a propósito: sobre papel casi
+     blanco un color saturado grita, y aquí el tono solo tiene que orientar.
+     Los matices están repartidos para que seis estados se distingan de un
+     vistazo: 250 azul, 292 violeta, 85 ámbar, 195 cian, 155 verde. */
+  --tono-nuevo: oklch(0.45 0.13 250);
+  --tono-nuevo-suave: oklch(0.955 0.022 250);
+  --tono-revision: oklch(0.45 0.14 292);
+  --tono-revision-suave: oklch(0.955 0.024 292);
+  --tono-progreso: oklch(0.45 0.1 85);
+  --tono-progreso-suave: oklch(0.955 0.04 85);
+  --tono-espera: oklch(0.45 0.09 195);
+  --tono-espera-suave: oklch(0.955 0.028 195);
+  --tono-hecho: oklch(0.45 0.11 155);
+  --tono-hecho-suave: oklch(0.955 0.032 155);
+  --tono-alta: oklch(0.45 0.12 55);
+  --tono-alta-suave: oklch(0.955 0.04 55);
+  --tono-urgente: oklch(0.45 0.17 25);
+  --tono-urgente-suave: oklch(0.95 0.04 25);
+
   --radius: 0.625rem;
 
   --sombra-flotante: 0 8px 24px -8px oklch(0 0 0 / 0.18);
@@ -153,6 +196,25 @@
   --ink: oklch(0.975 0 0);
   --ink-soft: oklch(0.68 0 0);
   --ink-faint: oklch(0.52 0 0);
+
+  /* Tonos, modo oscuro. Mismos matices, invertidos en luminosidad: sobre un
+     fondo de 0.155 el color tiene que subir a ~0.78 para leerse. El croma
+     baja un poco respecto al claro porque sobre fondo oscuro el mismo croma
+     se percibe más intenso. Los "suave" son casi el fondo, con un velo. */
+  --tono-nuevo: oklch(0.78 0.1 250);
+  --tono-nuevo-suave: oklch(0.28 0.045 250);
+  --tono-revision: oklch(0.78 0.11 292);
+  --tono-revision-suave: oklch(0.28 0.05 292);
+  --tono-progreso: oklch(0.82 0.11 85);
+  --tono-progreso-suave: oklch(0.29 0.05 85);
+  --tono-espera: oklch(0.8 0.08 195);
+  --tono-espera-suave: oklch(0.28 0.04 195);
+  --tono-hecho: oklch(0.79 0.11 155);
+  --tono-hecho-suave: oklch(0.28 0.045 155);
+  --tono-alta: oklch(0.8 0.12 55);
+  --tono-alta-suave: oklch(0.29 0.055 55);
+  --tono-urgente: oklch(0.76 0.15 25);
+  --tono-urgente-suave: oklch(0.3 0.07 25);
 
   --sombra-flotante: 0 8px 24px -8px oklch(0 0 0 / 0.55);
   --sombra-arrastre: 0 12px 28px -10px oklch(0 0 0 / 0.65);

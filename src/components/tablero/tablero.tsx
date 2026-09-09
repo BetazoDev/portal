@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { TarjetaKanban } from "@/components/dominio/tarjeta-kanban";
 import type { TareaDeTablero } from "@/components/tablero/tipos";
 import { COLUMNAS, type Estado } from "@/lib/dominio";
+import { BARRA_COLUMNA } from "@/lib/tonos";
 import { calcularOrden } from "@/lib/orden";
 import { crearClienteNavegador } from "@/lib/supabase/client";
 
@@ -275,11 +276,15 @@ function Columna({
       ref={setNodeRef}
       aria-label={etiqueta}
       className={cn(
-        "bg-surface-sunken rounded-card flex w-72 shrink-0 flex-col border",
+        "bg-surface-sunken rounded-card flex w-72 shrink-0 flex-col overflow-hidden border",
         "duration-(--duracion-rapida) ease-(--curva) transition-colors",
         isOver ? "border-border-strong" : "border-border"
       )}
     >
+      {/* Dos píxeles de tono. Suficiente para saltar de una columna a otra sin
+          leer el encabezado, y poco para no competir con las tarjetas. */}
+      <div className={cn("h-0.5 shrink-0", BARRA_COLUMNA[estado])} aria-hidden />
+
       <header className="text-label text-ink-soft flex shrink-0 items-center justify-between px-3 py-2.5">
         <span className="text-ink">{etiqueta}</span>
         <span data-cifras>{tareas.length}</span>

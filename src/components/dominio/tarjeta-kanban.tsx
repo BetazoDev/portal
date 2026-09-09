@@ -42,9 +42,10 @@ export function TarjetaKanban({
       className={cn(
         "bg-surface border-border rounded-card hover:border-border-strong border p-3",
         "transition-[border-color,box-shadow,transform] duration-(--duracion-rapida) ease-(--curva)",
-        // La tarjeta vencida es la única del tablero con filete, así que se
-        // distingue de un vistazo sin necesidad de color.
-        vencida && "border-l-ink border-l-2",
+        // La tarjeta vencida es la única del tablero con filete lateral. El
+        // rojo lo refuerza, pero el filete se queda: quien no distinga el tono
+        // sigue viendo que esa tarjeta tiene algo distinto.
+        vencida && "border-l-tono-urgente border-l-2",
         arrastrable && "cursor-grab active:cursor-grabbing",
         arrastrando && "shadow-arrastre scale-[1.02] cursor-grabbing",
         className
@@ -65,7 +66,7 @@ export function TarjetaKanban({
             <span
               className={cn(
                 "inline-flex items-center gap-1.5",
-                vencida ? "text-ink font-semibold" : "text-ink-soft"
+                vencida ? "text-tono-urgente font-semibold" : "text-ink-soft"
               )}
             >
               {vencida ? (

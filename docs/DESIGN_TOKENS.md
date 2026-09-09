@@ -16,10 +16,19 @@ Dos fuentes:
 2. **Tu instrucción directa: blanco y negro, con modo claro y oscuro.** Esto
    gana sobre el color de la imagen, que es morado sobre lavanda.
 
-Consecuencia: todo el sistema es escala de grises pura (croma 0 en OKLCH). El
-único acento disponible es el contraste. En modo claro el acento es tinta casi
-negra; en modo oscuro es papel casi blanco. Todo lo que en una interfaz normal
-se resolvería con color aquí se resuelve con **peso, relleno, borde y glifo**.
+Consecuencia: la base del sistema es escala de grises pura (croma 0 en OKLCH).
+El acento estructural es el contraste. En modo claro es tinta casi negra; en
+modo oscuro, papel casi blanco. Todo lo que en una interfaz normal se
+resolvería con color se resuelve aquí con **peso, relleno, borde y glifo**.
+
+> **Revisión de septiembre de 2026.** El dueño pidió después añadir tono a
+> estados y prioridades, discreto y en los dos modos. Se añadió **encima** del
+> sistema existente, sin quitarle nada: el glifo, el borde punteado, el peso y
+> el filete de vencido siguen ahí y siguen distinguiendo por sí solos. Quitando
+> todo el color, la interfaz se sigue leyendo igual — ésa fue la condición.
+>
+> El gris sigue siendo la base. El tono es una capa de reconocimiento rápido,
+> no el portador del significado. Ver **Tonos semánticos** más abajo.
 
 ---
 
@@ -56,10 +65,50 @@ Escala de grises en OKLCH. Cada valor nombrado por función, no por color.
 En oscuro el fondo **no** es negro puro: `#1a1a1a` evita el halo que produce el
 texto blanco sobre negro absoluto en pantallas OLED.
 
+### Tonos semánticos
+
+Añadidos en septiembre de 2026 sobre el sistema en gris, no en su lugar.
+
+Cada tono tiene dos variantes —la de línea y texto, y una `-suave` para
+rellenos— y **valores distintos por modo**. No es el mismo color con opacidad:
+en claro la luminosidad baja a 0.45 para que el texto contraste sobre el
+relleno suave, y en oscuro sube a ~0.78 sobre un relleno de 0.28. El croma
+baja un punto en oscuro porque sobre fondo negro el mismo croma se percibe
+más intenso.
+
+| Uso | Matiz | Claro | Oscuro |
+|---|---|---|---|
+| `nuevo` | 250 azul | `oklch(0.45 0.13 250)` | `oklch(0.78 0.10 250)` |
+| `en_revision` | 292 violeta | `oklch(0.45 0.14 292)` | `oklch(0.78 0.11 292)` |
+| `en_progreso` | 85 ámbar | `oklch(0.45 0.10 85)` | `oklch(0.82 0.11 85)` |
+| `esperando_cliente` | 195 cian | `oklch(0.45 0.09 195)` | `oklch(0.80 0.08 195)` |
+| `hecho` | 155 verde | `oklch(0.45 0.11 155)` | `oklch(0.79 0.11 155)` |
+| `alta` | 55 naranja | `oklch(0.45 0.12 55)` | `oklch(0.80 0.12 55)` |
+| `urgente` | 25 rojo | `oklch(0.45 0.17 25)` | `oklch(0.76 0.15 25)` |
+
+Los matices están repartidos para que seis estados se separen de un vistazo.
+**Croma bajo a propósito** (0.08–0.17): el tono tiene que orientar, no gritar.
+
+**Quién se queda sin tono, y por qué.** `cancelado` está fuera de juego y se
+deja en gris: apartarlo de la vista es más útil que darle un color que diga
+«error». Las prioridades `baja` y `media` también, porque son la mayoría de
+las tareas y si todo tuviera color el color dejaría de avisar de nada.
+
+Contraste medido en el navegador, texto sobre su propio relleno, los catorce
+pares: **de 6.16:1 a 8.46:1**. Todos por encima del 4.5:1 que pide AA para
+texto pequeño.
+
+La correspondencia estado→matiz vive en `src/lib/tonos.ts`, no en los
+componentes: es una decisión de producto y tiene que cambiarse en un solo
+sitio. Las clases van escritas enteras porque Tailwind v4 solo genera las que
+encuentra literales — un `bg-tono-${x}` compila sin quejarse y se ve gris en
+producción.
+
 ### Los seis estados del tablero
 
-Sin color, el estado se codifica con **glifo + relleno**. El glifo va siempre
-acompañado de su etiqueta: nunca depende solo de la forma.
+El estado se codifica con **glifo + relleno**, y el tono se suma encima. El
+glifo va siempre acompañado de su etiqueta: nunca depende solo de la forma, ni
+solo del color.
 
 | Estado | Etiqueta | Glifo | Tratamiento del badge |
 |---|---|---|---|
