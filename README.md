@@ -84,7 +84,7 @@ un archivo nuevo.
 node scripts/pruebas-aislamiento.mjs
 ```
 
-Catorce pruebas que abren **sesiones reales con la llave anon**. Nunca uses
+Diecisiete pruebas que abren **sesiones reales con la llave anon**. Nunca uses
 `service_role` para correrlas: esa llave se salta RLS y todas pasarían en
 falso.
 
