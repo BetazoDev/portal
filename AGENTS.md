@@ -349,6 +349,20 @@ primero que quien llama es `platform_admin`.
 Si cualquier paso falla después del 3, revierte el usuario creado. Un usuario
 huérfano sin membresía deja el sistema en estado inconsistente.
 
+> ⚠️ **El historial de n8n también es un log, y ahí sí se estaba escapando.**
+>
+> n8n guarda por defecto los datos de cada ejecución en su base, incluida la
+> carga completa del webhook. Como `user.created` lleva la contraseña en claro,
+> quedaba persistida en el historial de ejecuciones y visible para cualquiera
+> con acceso al panel — exactamente lo que este punto prohíbe.
+>
+> El workflow **CRM — eventos** debe tener, en Settings, **Save successful
+> production executions → Do not save**. Los errores sí pueden guardarse: no
+> llevan la carga completa.
+>
+> Cualquier flujo nuevo que reciba credenciales queda sujeto a lo mismo. Y si
+> durante una prueba quedó una ejecución con contraseña, bórrala al terminar.
+
 ---
 
 ## 9. Automatizaciones en n8n
