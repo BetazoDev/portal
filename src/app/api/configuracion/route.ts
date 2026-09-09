@@ -4,11 +4,24 @@ import { z } from "zod";
 import { soloAdmin } from "@/lib/guardia";
 import { crearClienteAdmin } from "@/lib/supabase/admin";
 
+/**
+ * URL sin diagonal final.
+ *
+ * El navegador la añade sola al copiar del barra de direcciones, y con ella
+ * app_base_url produce enlaces como https://dominio//tareas/… en los correos.
+ * Se normaliza al guardar en vez de confiar en que quien la pegue se acuerde.
+ */
+const urlSinBarraFinal = z
+  .string()
+  .trim()
+  .url("Esa URL no es válida")
+  .transform((valor) => valor.replace(/\/+$/, ""));
+
 const esquema = z.object({
   full_name: z.string().trim().min(2, "Escribe tu nombre").optional(),
-  n8n_webhook_url: z.string().trim().url("Esa URL no es válida").optional().or(z.literal("")),
+  n8n_webhook_url: urlSinBarraFinal.optional().or(z.literal("")),
   n8n_webhook_secret: z.string().trim().optional(),
-  app_base_url: z.string().trim().url("Esa URL no es válida").optional().or(z.literal("")),
+  app_base_url: urlSinBarraFinal.optional().or(z.literal("")),
   admin_email: z.string().trim().email("Ese correo no es válido").optional().or(z.literal("")),
 });
 
