@@ -381,6 +381,47 @@ async function principal() {
         `${data?.length ?? "?"} fila(s)`
       );
     }
+    // 15. El bucket tiene que rechazar los tipos que no están en la lista.
+    //     Antes de la migración 007 entraba cualquier cosa: el único filtro
+    //     vivía en el navegador, y un cliente con su token lo salta.
+    {
+      const cuerpo = new Blob(["MZ"], { type: "application/x-msdownload" });
+      const { error } = await sesionA.storage
+        .from("task-attachments")
+        .upload(`${A.orgId}/${A.tareaId}/prueba.exe`, cuerpo, {
+          contentType: "application/x-msdownload",
+        });
+
+      comprobar(
+        15,
+        "A sube un ejecutable",
+        "Rechazado por el bucket",
+        !!error,
+        error ? `rechazado: ${error.message}` : "SE SUBIÓ"
+      );
+    }
+
+    // 15b. Y tiene que seguir aceptando lo legítimo, dentro de su carpeta.
+    {
+      const ruta = `${A.orgId}/${A.tareaId}/prueba.png`;
+      const png = Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+        "base64"
+      );
+      const { error } = await sesionA.storage
+        .from("task-attachments")
+        .upload(ruta, png, { contentType: "image/png" });
+
+      comprobar(
+        "15b",
+        "A sube un PNG a su propia carpeta",
+        "Se acepta",
+        !error,
+        error ? `rechazado: ${error.message}` : "subido"
+      );
+
+      if (!error) await admin.storage.from("task-attachments").remove([ruta]);
+    }
   } finally {
     await limpiar(ids);
   }

@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { seSirveEnLinea } from "@/lib/adjuntos";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export type Resultado = { ok: boolean; error?: string };
@@ -121,7 +121,7 @@ const esquemaTarea = z.object({
  * RLS lo obliga: status = 'nuevo' y created_by = auth.uid(). Aquí se manda
  * explícito para que el rechazo, si llega, sea por otra cosa y no por esto.
  */
-export async function crearTarea(datos: FormData): Promise<Resultado> {
+export async function crearTarea(datos: FormData): Promise<Resultado & { taskId?: string }> {
   const analizado = esquemaTarea.safeParse(Object.fromEntries(datos));
   if (!analizado.success) return { ok: false, error: analizado.error.issues[0].message };
 
@@ -133,19 +133,30 @@ export async function crearTarea(datos: FormData): Promise<Resultado> {
 
   const { task_type_id, due_date, description, ...campos } = analizado.data;
 
-  const { error } = await supabase.from("tasks").insert({
-    ...campos,
-    task_type_id: task_type_id || null,
-    due_date: due_date || null,
-    description: description || null,
-    status: "nuevo",
-    created_by: user.id,
-  });
+  const { data: tarea, error } = await supabase
+    .from("tasks")
+    .insert({
+      ...campos,
+      task_type_id: task_type_id || null,
+      due_date: due_date || null,
+      description: description || null,
+      status: "nuevo",
+      created_by: user.id,
+    })
+    .select("id")
+    .single();
 
-  if (error) return { ok: false, error: "No se pudo crear la tarea." };
+  if (error || !tarea) return { ok: false, error: "No se pudo crear la tarea." };
 
   revalidatePath("/portal", "layout");
-  redirect("/portal");
+
+  /*
+   * Antes esto redirigía. Ahora devuelve el id porque los adjuntos se suben
+   * después de crear la tarea: la ruta del bucket los cuelga de un task_id
+   * que hasta este momento no existía. El formulario navega él mismo cuando
+   * termina de subir.
+   */
+  return { ok: true, taskId: tarea.id };
 }
 
 export async function agregarComentario(taskId: string, cuerpo: string): Promise<Resultado> {
@@ -178,11 +189,20 @@ export async function agregarComentario(taskId: string, cuerpo: string): Promise
   return { ok: true };
 }
 
+/**
+ * Los pantallazos y los PDF se abren en el navegador, que es lo cómodo para
+ * revisarlos. Todo lo demás se sirve con Content-Disposition: attachment.
+ *
+ * No es cosmético: un SVG es XML y puede llevar <script> dentro. Servido en
+ * línea, ese código se ejecutaría con la URL firmada en el dominio de
+ * Supabase. Forzando la descarga el navegador lo guarda en vez de
+ * interpretarlo, y por eso se puede aceptar SVG sin sobresaltos.
+ */
 export async function urlDeDescarga(rutaStorage: string): Promise<{ url?: string; error?: string }> {
   const supabase = await crearClienteServidor();
   const { data, error } = await supabase.storage
     .from("task-attachments")
-    .createSignedUrl(rutaStorage, 60);
+    .createSignedUrl(rutaStorage, 60, seSirveEnLinea(rutaStorage) ? {} : { download: true });
 
   if (error || !data) return { error: "No se pudo preparar la descarga." };
   return { url: data.signedUrl };

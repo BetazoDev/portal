@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { seSirveEnLinea } from "@/lib/adjuntos";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 export type Resultado = { ok: boolean; error?: string };
@@ -115,11 +116,20 @@ export async function guardarNotasPrivadas(
 }
 
 /** URL firmada de vigencia corta. Los adjuntos nunca se sirven públicos. */
+/**
+ * Los pantallazos y los PDF se abren en el navegador, que es lo cómodo para
+ * revisarlos. Todo lo demás se sirve con Content-Disposition: attachment.
+ *
+ * No es cosmético: un SVG es XML y puede llevar <script> dentro. Servido en
+ * línea, ese código se ejecutaría con la URL firmada en el dominio de
+ * Supabase. Forzando la descarga el navegador lo guarda en vez de
+ * interpretarlo, y por eso se puede aceptar SVG sin sobresaltos.
+ */
 export async function urlDeDescarga(rutaStorage: string): Promise<{ url?: string; error?: string }> {
   const supabase = await crearClienteServidor();
   const { data, error } = await supabase.storage
     .from("task-attachments")
-    .createSignedUrl(rutaStorage, 60);
+    .createSignedUrl(rutaStorage, 60, seSirveEnLinea(rutaStorage) ? {} : { download: true });
 
   if (error || !data) return { error: "No se pudo preparar la descarga." };
   return { url: data.signedUrl };

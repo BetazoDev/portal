@@ -77,6 +77,8 @@ un archivo nuevo.
 | `003` | Revoca `EXECUTE` de `build_task_payload` y de las funciones de disparador |
 | `004` | `guard_profile_update`: impide que un usuario se ascienda a `platform_admin` |
 | `005` | Arregla el listado de storage y afina el rendimiento de las políticas |
+| `006` | Archivar una agencia le corta el acceso de verdad; añade el `DELETE` que faltaba en storage |
+| `007` | Límite de tamaño y lista de tipos en el bucket, del lado del servidor |
 
 ## Pruebas de aislamiento
 
@@ -84,7 +86,7 @@ un archivo nuevo.
 node scripts/pruebas-aislamiento.mjs
 ```
 
-Diecisiete pruebas que abren **sesiones reales con la llave anon**. Nunca uses
+Diecinueve pruebas que abren **sesiones reales con la llave anon**. Nunca uses
 `service_role` para correrlas: esa llave se salta RLS y todas pasarían en
 falso.
 

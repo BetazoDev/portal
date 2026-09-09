@@ -63,7 +63,7 @@ export default async function PaginaClientes() {
                       {o.name}
                     </Link>
                     {o.status !== "activo" ? (
-                      <span className="text-chip text-ink-soft border-linea rounded-chip border px-1.5 py-0.5">
+                      <span className="text-chip text-ink-soft rounded-chip border px-1.5 py-0.5">
                         {o.status === "archivado" ? "Archivado" : "Pausado"}
                       </span>
                     ) : null}

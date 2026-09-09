@@ -171,7 +171,7 @@ export function AccionesDeFila({
                 Esta agencia está vacía. No hay nada que perder.
               </p>
             ) : (
-              <div className="rounded-card border border-linea p-4">
+              <div className="rounded-card border p-4">
                 <p className="text-meta text-ink-soft mb-3">Se borra para siempre:</p>
                 <ul className="text-meta grid grid-cols-2 gap-x-6 gap-y-1">
                   <Renglon n={conteo.tareas} singular="tarea" plural="tareas" />
