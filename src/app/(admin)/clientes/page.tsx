@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/table";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
+import { cambiarEstadoOrganizacion, contarContenidoDeOrganizacion } from "./[orgId]/acciones";
+import { AccionesDeFila } from "./acciones-fila";
 import { FormularioAltaCliente } from "./formulario-alta";
 
 export const metadata: Metadata = { title: "Clientes" };
@@ -46,18 +48,26 @@ export default async function PaginaClientes() {
               <TableHead>Correo</TableHead>
               <TableHead className="text-right">Proyectos</TableHead>
               <TableHead className="text-right">Tareas</TableHead>
+              <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {organizaciones.map((o) => (
               <TableRow key={o.id}>
                 <TableCell>
-                  <Link
-                    href={`/clientes/${o.id}`}
-                    className="rounded-control font-medium underline-offset-4 hover:underline"
-                  >
-                    {o.name}
-                  </Link>
+                  <div className="flex items-baseline gap-2">
+                    <Link
+                      href={`/clientes/${o.id}`}
+                      className="rounded-control font-medium underline-offset-4 hover:underline"
+                    >
+                      {o.name}
+                    </Link>
+                    {o.status !== "activo" ? (
+                      <span className="text-chip text-ink-soft border-linea rounded-chip border px-1.5 py-0.5">
+                        {o.status === "archivado" ? "Archivado" : "Pausado"}
+                      </span>
+                    ) : null}
+                  </div>
                 </TableCell>
                 <TableCell className="text-ink-soft">{o.contact_email ?? "—"}</TableCell>
                 <TableCell className="text-right" data-cifras>
@@ -65,6 +75,15 @@ export default async function PaginaClientes() {
                 </TableCell>
                 <TableCell className="text-right" data-cifras>
                   {o.tasks?.length ?? 0}
+                </TableCell>
+                <TableCell className="text-right">
+                  <AccionesDeFila
+                    id={o.id}
+                    nombre={o.name}
+                    status={o.status}
+                    alCambiarEstado={cambiarEstadoOrganizacion}
+                    alContar={contarContenidoDeOrganizacion}
+                  />
                 </TableCell>
               </TableRow>
             ))}

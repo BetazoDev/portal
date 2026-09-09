@@ -161,3 +161,60 @@ export async function guardarOrganizacion(datos: FormData): Promise<Resultado> {
     [`/clientes/${id}`, "/clientes", "/"]
   );
 }
+
+/**
+ * Archivar es la baja de verdad, y es reversible. Desde la migración 006 una
+ * organización archivada sale de my_org_ids(), así que su gente deja de ver el
+ * portal en el acto: no es una etiqueta, les cierra la puerta.
+ *
+ * Se prefiere esto al borrado en todos los casos menos uno —el alta
+ * equivocada—, porque conserva el historial y se puede deshacer.
+ */
+export async function cambiarEstadoOrganizacion(
+  id: string,
+  status: "activo" | "pausado" | "archivado"
+): Promise<Resultado> {
+  return ejecutar((s) => s.from("organizations").update({ status }).eq("id", id), [
+    `/clientes/${id}`,
+    "/clientes",
+    "/",
+  ]);
+}
+
+export type ConteoOrganizacion = {
+  proyectos: number;
+  clientesFinales: number;
+  tareas: number;
+  comentarios: number;
+  adjuntos: number;
+  miembros: number;
+};
+
+/**
+ * Lo que se perdería al borrar. Va antes de la confirmación porque "esto
+ * borrará 340 tareas y 51 adjuntos" es una advertencia y "¿estás seguro?" no.
+ *
+ * head: true pide solo el conteo, sin traerse las filas.
+ */
+export async function contarContenidoDeOrganizacion(id: string): Promise<ConteoOrganizacion> {
+  const supabase = await crearClienteServidor();
+
+  const contar = async (tabla: "projects" | "end_clients" | "tasks" | "comments" | "attachments" | "memberships") => {
+    const { count } = await supabase
+      .from(tabla)
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", id);
+    return count ?? 0;
+  };
+
+  const [proyectos, clientesFinales, tareas, comentarios, adjuntos, miembros] = await Promise.all([
+    contar("projects"),
+    contar("end_clients"),
+    contar("tasks"),
+    contar("comments"),
+    contar("attachments"),
+    contar("memberships"),
+  ]);
+
+  return { proyectos, clientesFinales, tareas, comentarios, adjuntos, miembros };
+}
