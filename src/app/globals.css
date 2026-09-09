@@ -220,6 +220,37 @@
   --sombra-arrastre: 0 12px 28px -10px oklch(0 0 0 / 0.65);
 }
 
+@layer components {
+  /* ---- Chip del tipo de tarea ----------------------------------------------
+     A diferencia de estados y prioridades, el color del tipo no lo elige el
+     sistema: lo elige el dueño por organización y se guarda en
+     task_types.color como hex. Puede ser cualquiera.
+
+     Por eso aquí solo se toma el MATIZ del color guardado y se le imponen la
+     luminosidad y un techo de croma, distintos por modo. Sin eso, un amarillo
+     claro desaparecería sobre papel blanco y un azul marino sobre el fondo
+     oscuro: el dueño podría dejar ilegible el chip sin darse cuenta.
+
+     `min(c, ...)` es un techo, no un valor fijo: un color ya apagado como el
+     gris pizarra conserva su croma bajo en lugar de saturarse.
+
+     Sin color guardado cae en gris (croma 0) y el chip queda como estaba. */
+  .chip-tipo {
+    --base: var(--tipo-color, oklch(0.55 0 0));
+    --tono: oklch(from var(--base) 0.45 min(c, 0.13) h);
+
+    color: var(--tono);
+    background-color: oklch(from var(--base) 0.955 min(c, 0.035) h);
+    border-color: color-mix(in oklch, var(--tono) 35%, transparent);
+  }
+
+  .dark .chip-tipo {
+    --tono: oklch(from var(--base) 0.79 min(c, 0.11) h);
+
+    background-color: oklch(from var(--base) 0.28 min(c, 0.05) h);
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

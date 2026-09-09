@@ -10,7 +10,7 @@ import { crearClienteServidor } from "@/lib/supabase/server";
 export const metadata: Metadata = { title: "Hoy" };
 
 const CAMPOS =
-  "id, title, status, priority, task_type_name, project_name, organization_name, due_date, is_overdue, comment_count, attachment_count, sort_order";
+  "id, title, status, priority, task_type_name, task_type_color, project_name, organization_name, due_date, is_overdue, comment_count, attachment_count, sort_order";
 
 export default async function PaginaHoy() {
   const supabase = await crearClienteServidor();
@@ -67,6 +67,7 @@ type Fila = {
   title: string;
   priority: "baja" | "media" | "alta" | "urgente";
   task_type_name: string | null;
+  task_type_color: string | null;
   project_name: string;
   organization_name: string;
   due_date: string | null;
@@ -97,6 +98,7 @@ function ListaDeTareas({ titulo, tareas }: { titulo: string; tareas: Fila[] }) {
                     titulo: t.title,
                     prioridad: t.priority,
                     tipo: t.task_type_name,
+                    tipoColor: t.task_type_color,
                     proyecto: `${t.organization_name} / ${t.project_name}`,
                     fecha: t.due_date,
                     vencida: t.is_overdue,

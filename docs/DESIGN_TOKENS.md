@@ -141,12 +141,36 @@ Sin rojo: la tarjeta vencida lleva un filete izquierdo de 2px en `--ink`, la
 fecha pasa a `--ink` peso 600 y se le antepone `AlertTriangle` de 14px. Es la
 única tarjeta del tablero con filete, así que se distingue de un vistazo.
 
-### Los colores que la base guarda y la interfaz no usa
+### El color del tipo de tarea, que sí elige el dueño
 
-`task_types.color` y `projects.color` guardan hex (rojo, ámbar, azul, morado,
-verde, gris). **Monocromo estricto: no se pintan.** El tipo de tarea se lee
-como texto en un chip y el proyecto como texto. Las columnas siguen en la base
-por si algún día cambia la decisión; simplemente no se renderizan.
+`task_types.color` guarda un hex por tipo y por organización, y `seed_task_types()`
+siembra seis: `#dc2626` Urgente, `#f59e0b` Cambio rápido, `#2563eb` Desarrollo,
+`#7c3aed` Automatización, `#0d9488` Rendimiento, `#64748b` Mantenimiento. **Son
+editables**, así que el sistema no puede confiar en ellos tal cual.
+
+Aquí el color no lo elige el sistema, a diferencia de estados y prioridades.
+Por eso la clase `.chip-tipo` se queda **solo con el matiz** del hex guardado y
+le impone luminosidad y techo de croma, distintos por modo:
+
+```css
+color: oklch(from var(--base) 0.45 min(c, 0.13) h);   /* claro  */
+color: oklch(from var(--base) 0.79 min(c, 0.11) h);   /* oscuro */
+```
+
+Sin eso, el dueño podría dejar el chip ilegible sin darse cuenta: un amarillo
+claro desaparece sobre papel blanco y un azul marino sobre el fondo oscuro.
+Probado con los dos extremos —`#fde047` y `#1e1b4b`— y ambos salen legibles.
+
+`min(c, …)` es un **techo**, no un valor fijo: un color ya apagado como el gris
+pizarra conserva su croma bajo en lugar de saturarse. Sin color guardado cae en
+gris y el chip queda como estaba.
+
+Esto usa sintaxis de color relativa (`oklch(from …)`), comprobada en el
+navegador antes de adoptarla.
+
+`projects.color` sigue guardándose y sin usarse: el proyecto se lee como texto
+bajo el título, y darle un segundo color a la misma tarjeta competiría con el
+tipo.
 
 ### Acciones destructivas
 

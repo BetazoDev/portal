@@ -9,6 +9,7 @@ export type DatosTarjeta = {
   titulo: string;
   prioridad: Prioridad;
   tipo?: string | null;
+  tipoColor?: string | null;
   proyecto?: string | null;
   fecha?: string | null;
   vencida?: boolean;
@@ -35,7 +36,8 @@ export function TarjetaKanban({
   arrastrable?: boolean;
   className?: string;
 }) {
-  const { titulo, prioridad, tipo, proyecto, fecha, vencida, comentarios = 0, adjuntos = 0 } = datos;
+  const { titulo, prioridad, tipo, tipoColor, proyecto, fecha, vencida, comentarios = 0, adjuntos = 0 } =
+    datos;
 
   return (
     <article
@@ -52,7 +54,7 @@ export function TarjetaKanban({
       )}
     >
       <div className="mb-2 flex items-start justify-between gap-2">
-        {tipo ? <ChipTipo nombre={tipo} /> : <span />}
+        {tipo ? <ChipTipo nombre={tipo} color={tipoColor} /> : <span />}
         <ChipPrioridad prioridad={prioridad} />
       </div>
 

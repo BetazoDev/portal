@@ -243,11 +243,17 @@ export function Catalogo() {
             <ChipPrioridad key={p.prioridad} prioridad={p.prioridad} />
           ))}
         </div>
+        {/* Los mismos seis colores que siembra seed_task_types(). El dueño los
+            puede cambiar por organización, así que el chip toma el matiz y le
+            impone luminosidad y techo de croma. */}
         <div className="flex flex-wrap gap-2">
-          <ChipTipo nombre="Urgente" />
-          <ChipTipo nombre="Cambio rápido" />
-          <ChipTipo nombre="Desarrollo" />
-          <ChipTipo nombre="Automatización" />
+          <ChipTipo nombre="Urgente" color="#dc2626" />
+          <ChipTipo nombre="Cambio rápido" color="#f59e0b" />
+          <ChipTipo nombre="Desarrollo" color="#2563eb" />
+          <ChipTipo nombre="Automatización" color="#7c3aed" />
+          <ChipTipo nombre="Rendimiento" color="#0d9488" />
+          <ChipTipo nombre="Mantenimiento" color="#64748b" />
+          <ChipTipo nombre="Sin color" />
         </div>
       </Seccion>
 

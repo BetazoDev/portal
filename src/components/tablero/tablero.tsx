@@ -26,14 +26,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { TarjetaKanban } from "@/components/dominio/tarjeta-kanban";
-import type { TareaDeTablero } from "@/components/tablero/tipos";
+import { CAMPOS_VISTA, type TareaDeTablero } from "@/components/tablero/tipos";
 import { COLUMNAS, type Estado } from "@/lib/dominio";
-import { BARRA_COLUMNA } from "@/lib/tonos";
 import { calcularOrden } from "@/lib/orden";
+import { BARRA_COLUMNA } from "@/lib/tonos";
 import { crearClienteNavegador } from "@/lib/supabase/client";
-
-const CAMPOS_VISTA =
-  "id, organization_id, project_id, project_name, end_client_name, task_type_name, title, status, priority, sort_order, due_date, comment_count, attachment_count, is_overdue";
 
 export function Tablero({
   organizationId,
@@ -241,6 +238,7 @@ export function Tablero({
               titulo: arrastrada.title,
               prioridad: arrastrada.priority,
               tipo: arrastrada.task_type_name,
+            tipoColor: arrastrada.task_type_color,
               proyecto: hayFiltroDeProyecto ? null : arrastrada.project_name,
               fecha: arrastrada.due_date,
               vencida: arrastrada.is_overdue,
@@ -337,6 +335,7 @@ function TarjetaOrdenable({
     titulo: tarea.title,
     prioridad: tarea.priority,
     tipo: tarea.task_type_name,
+        tipoColor: tarea.task_type_color,
     proyecto: ocultarProyecto ? null : tarea.project_name,
     fecha: tarea.due_date,
     vencida: tarea.is_overdue,

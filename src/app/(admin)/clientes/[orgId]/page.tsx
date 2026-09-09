@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { FiltrosTablero } from "@/components/tablero/filtros-tablero";
 import { Tablero } from "@/components/tablero/tablero";
-import type { TareaDeTablero } from "@/components/tablero/tipos";
+import { CAMPOS_VISTA, type TareaDeTablero } from "@/components/tablero/tipos";
 import { crearClienteServidor } from "@/lib/supabase/server";
 
 import { moverTarea, renormalizarColumna } from "./acciones-tablero";
@@ -16,9 +16,7 @@ export default async function PaginaTablero({ params }: { params: Promise<{ orgI
   const [{ data: tareas }, { data: proyectos }, { data: tipos }] = await Promise.all([
     supabase
       .from("v_board_tasks")
-      .select(
-        "id, organization_id, project_id, project_name, end_client_name, task_type_name, title, status, priority, sort_order, due_date, comment_count, attachment_count, is_overdue"
-      )
+      .select(CAMPOS_VISTA)
       .eq("organization_id", orgId)
       .order("sort_order"),
     supabase.from("projects").select("id, name").eq("organization_id", orgId).order("name"),
