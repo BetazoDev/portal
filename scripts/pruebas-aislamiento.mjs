@@ -333,6 +333,54 @@ async function principal() {
         `must_change_password = ${perfil?.must_change_password}${error ? ` (error ${error.code})` : " (sin error)"}`
       );
     }
+    // 14. Archivar tiene que cortar el acceso de verdad, no ser una etiqueta.
+    //     Antes de la migración 006 este estado no lo miraba ninguna política:
+    //     archivabas una agencia y su gente seguía entrando como si nada.
+    {
+      await admin.from("organizations").update({ status: "archivado" }).eq("id", A.orgId);
+
+      const [{ data: tareas }, { data: orgs }, { data: tablero }] = await Promise.all([
+        sesionA.from("tasks").select("id"),
+        sesionA.from("organizations").select("id"),
+        sesionA.from("v_board_tasks").select("id"),
+      ]);
+
+      comprobar(
+        14,
+        "A entra con su agencia archivada",
+        "0 filas en todo",
+        tareas?.length === 0 && orgs?.length === 0 && tablero?.length === 0,
+        `${tareas?.length ?? "?"} tareas, ${orgs?.length ?? "?"} orgs, ${tablero?.length ?? "?"} en el tablero`
+      );
+    }
+
+    // 14b. Y tiene que ser reversible: reactivar devuelve el acceso.
+    {
+      await admin.from("organizations").update({ status: "activo" }).eq("id", A.orgId);
+      const { data } = await sesionA.from("tasks").select("id");
+      comprobar(
+        "14b",
+        "A vuelve tras reactivar la agencia",
+        "Ve otra vez su tarea",
+        data?.length === 1,
+        `${data?.length ?? "?"} fila(s)`
+      );
+    }
+
+    // 14c. "pausado" es un alto temporal, no una baja: no debe cortar nada.
+    //      Si algún día alguien lo mete en el filtro de my_org_ids(), esto avisa.
+    {
+      await admin.from("organizations").update({ status: "pausado" }).eq("id", A.orgId);
+      const { data } = await sesionA.from("tasks").select("id");
+      await admin.from("organizations").update({ status: "activo" }).eq("id", A.orgId);
+      comprobar(
+        "14c",
+        "A entra con su agencia pausada",
+        "Sigue viendo su tarea",
+        data?.length === 1,
+        `${data?.length ?? "?"} fila(s)`
+      );
+    }
   } finally {
     await limpiar(ids);
   }
